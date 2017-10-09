@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+: ${CLUSTER_LOCAL_DNS:=cluster.local.valuphone.com}
+HAPROXY_CONFIG_FILE=/usr/local/etc/haproxy/haproxy.cfg
+
+if [[ $(dig +short $CLUSTER_LOCAL_DNS | wc -l) -lt 1 ]]; then
+    echo "No ip addresses for cluster local dns: $CLUSTER_LOCAL_DNS, exiting ..."
+    exit 1
+fi
+
+i=1; for ip in $(dig +short $CLUSTER_LOCAL_DNS); do
+    echo "    server api${i}           $ip:16443 check" >> $HAPROXY_CONFIG_FILE
+    ((i++))
+done
+
+cat $HAPROXY_CONFIG_FILE
+
+exec haproxy-systemd-wrapper -f $HAPROXY_CONFIG_FILE
