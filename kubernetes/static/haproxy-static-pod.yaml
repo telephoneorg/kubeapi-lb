@@ -4,6 +4,7 @@ metadata:
   name: haproxy
   namespace: kube-system
   labels:
+    k8s-app: kubeapi-lb
     tier: control-plane
     component: load-balancer
   annotations:
@@ -14,9 +15,6 @@ spec:
   - name: haproxy
     image: telephoneorg/kubeapi-lb
     imagePullPolicy: IfNotPresent
-    env:
-    - name: CLUSTER_LOCAL_DNS
-      value: cluster.local.valuphone.com
     ports:
     - containerPort: 6443
       hostPort: 6443

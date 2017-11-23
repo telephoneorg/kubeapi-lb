@@ -10,7 +10,7 @@ DOCKER_REPO := kubeapi-lb
 DOCKER_TAG := latest
 DOCKER_IMAGE := $(DOCKER_ORG)/$(DOCKER_REPO):$(DOCKER_TAG)
 
-.PHONY: all build build-test templates test push-image
+.PHONY: all build build-test test push-image
 
 all: build test
 
@@ -19,10 +19,6 @@ build:
 
 build-test:
 	tests/edit $(DOCKER_IMAGE) tail -f /dev/null
-
-templates:
-	tmpld --strict --data=templates/vars.yaml \
-		$(shell find templates -type f -name '*.j2' | xargs)
 
 test:
 	tests/run $(DOCKER_IMAGE) tail -f /dev/null
